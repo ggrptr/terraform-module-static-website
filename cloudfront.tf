@@ -50,6 +50,13 @@ resource "aws_cloudfront_distribution" "website" {
     cloudfront_default_certificate = true
   }
 
+  custom_error_response {
+    error_caching_min_ttl = 0
+    error_code            = 404
+    response_code         = 404
+    response_page_path    = "/error.html"
+  }
+
 
 }
 

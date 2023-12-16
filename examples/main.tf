@@ -11,10 +11,11 @@ module "example" {
   }
 }
 
-resource "aws_s3_object" "index_html" {
+resource "aws_s3_object" "document" {
+  for_each     = fileset("${path.module}/documents", "*")
   bucket       = module.example.bucket_name
-  key          = "index.html"
-  source       = "./index.html"
+  key          = each.value
+  source       = "./documents/${each.value}"
   content_type = "text/html"
 }
 
