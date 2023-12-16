@@ -1,0 +1,24 @@
+#branch: develop
+#check:
+#  - CKV_DOCKER_1
+#compact: true
+#directory:
+#  - test-dir
+#docker-image: sample-image
+#dockerfile-path: Dockerfile
+#download-external-modules: true
+#evaluate-variables: true
+#external-checks-dir:
+#  - sample-dir
+#external-modules-download-path: .external_modules
+#framework:
+#  - all
+#output: cli
+quiet: true
+#repo-id: prisma-cloud/sample-repo
+skip-check:
+  - CKV_DOCKER_2 #"Ensure that HEALTHCHECK instructions have been added to container images"
+#skip-framework:
+#  - dockerfile
+#  - secrets
+soft-fail: false
