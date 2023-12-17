@@ -9,9 +9,9 @@ resource "aws_cloudfront_distribution" "website" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  default_root_object = "index.html"
+  default_root_object = var.distribution_properties.index_document
 
-  //aliases = [var.route53.host_name]
+  aliases = var.distribution_properties.domain_aliases
 
   origin {
     domain_name = aws_s3_bucket.website.bucket_regional_domain_name
@@ -41,8 +41,8 @@ resource "aws_cloudfront_distribution" "website" {
 
   restrictions {
     geo_restriction {
-      restriction_type = "whitelist"
-      locations        = ["HU"] #["US", "CA", "GB", "DE"]
+      restriction_type = var.distribution_properties.geo_restriction.restriction_type
+      locations        = var.distribution_properties.geo_restriction.locations
     }
   }
 
@@ -50,14 +50,15 @@ resource "aws_cloudfront_distribution" "website" {
     cloudfront_default_certificate = true
   }
 
-  custom_error_response {
-    error_caching_min_ttl = 0
-    error_code            = 404
-    response_code         = 404
-    response_page_path    = "/error.html"
+  dynamic "custom_error_response" {
+    for_each = var.distribution_properties.custom_error_responses
+    content {
+      error_caching_min_ttl = custom_error_response.value.error_caching_min_ttl
+      error_code            = custom_error_response.value.error_code
+      response_code         = custom_error_response.value.response_code
+      response_page_path    = custom_error_response.value.response_page_path
+    }
   }
-
-
 }
 
 resource "aws_cloudfront_origin_access_identity" "website" {

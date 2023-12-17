@@ -22,8 +22,8 @@ data "aws_iam_policy_document" "read_website_bucket" {
 
 
 resource "aws_s3_bucket" "website" {
-  #checkov:skip=CKV_TF_1:"Ensure Terraform module sources use a commit hash"
   #checkov:skip=CKV_AWS_21: "Ensure all data stored in the S3 bucket have versioning enabled"
+  #checkov:skip=CKV_TF_1:"Ensure Terraform module sources use a commit hash"
   #checkov:skip=CKV_AWS_145: "Ensure that S3 buckets are encrypted with KMS by default"
   #checkov:skip=CKV2_AWS_61: "Ensure that an S3 bucket has a lifecycle configuration"
   #checkov:skip=CKV_AWS_144: "Ensure that S3 bucket has cross-region replication enabled"
@@ -31,8 +31,27 @@ resource "aws_s3_bucket" "website" {
   #checkov:skip=CKV2_AWS_62: "Ensure S3 buckets should have event notifications enabled"
   #checkov:skip=CKV2_AWS_6: "Ensure that S3 bucket has a Public Access block"
 
-  bucket_prefix = "${module.label_aws_s3_bucket_website.id}-"
-  tags          = module.label_aws_s3_bucket_website.tags
+  bucket = var.bucket_properties.bucket_name
+  bucket_prefix = (
+    var.bucket_properties.bucket_prefix == null ?
+    (
+      var.bucket_properties.bucket_name == null ?
+      "" :
+      "${module.label_aws_s3_bucket_website.id}-"
+    ) :
+    var.bucket_properties.bucket_prefix
+  )
+
+  force_destroy = var.bucket_properties.force_destroy
+
+  tags = module.label_aws_s3_bucket_website.tags
+}
+
+resource "aws_s3_bucket_versioning" "website" {
+  bucket = aws_s3_bucket.website.id
+  versioning_configuration {
+    status = var.bucket_properties.versioning_status
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "website" {
@@ -49,11 +68,11 @@ resource "aws_s3_bucket_website_configuration" "website" {
   bucket = aws_s3_bucket.website.id
 
   index_document {
-    suffix = "index.html"
+    suffix = var.website_properties.index_document
   }
 
   error_document {
-    key = "error.html"
+    key = var.website_properties.error_document
   }
 
 }
