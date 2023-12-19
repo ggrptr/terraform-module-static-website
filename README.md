@@ -1,6 +1,6 @@
 # Simple page application with S3 and CloudFront
 
-[![](https://img.shields.io/badge/github-ggrptr/terraform--module--static--website-%233DA639.svg)](https://github.com/ggrptr/terraform-module-template "github.com/ggrptr/terraform-module-static-website")
+[![](https://img.shields.io/badge/github-ggrptr/terraform--module--static--website-%233DA639.svg)](https://github.com/ggrptr/terraform-module-static-website "github.com/ggrptr/terraform-module-static-website")
 [![License](https://img.shields.io/badge/license-MIT-%233DA639.svg)](https://opensource.org/licenses/MIT)
 
 
